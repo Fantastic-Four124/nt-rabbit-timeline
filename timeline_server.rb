@@ -85,6 +85,7 @@ class TimelineServer
     else
       follow_list_link = $follow_service + "/leaders/#{user_id}"
       leader_list = RestClient.get(follow_list_link)
+      leader_list = JSON.parse(leader_list) if leader_list
     end
     leader_list
   end
@@ -92,6 +93,7 @@ class TimelineServer
   # Generate unfollow list
   def generate_potential_tweet_after_unfo(leader_list)
     leaders_tweet_list = []
+    puts leader_list
     if leader_list != "[]".to_json
       leader_list.each do |leader_id|
         sub_list = get_new_leader_feed(leader_id)
