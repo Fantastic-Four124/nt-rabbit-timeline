@@ -75,7 +75,7 @@ class TimelineServer
     leaders_tweet_list = generate_potential_tweet_after_unfo(leader_list)
     $tweet_redis.del(user_id.to_s + '_timeline')
     $tweet_redis_spare.del(user_id.to_s + '_timeline')
-    assemble_timeline(leaders_tweet_list)
+    assemble_timeline(leaders_tweet_list,user_id)
   end
 
   def get_leader_list(user_id)
@@ -102,7 +102,7 @@ class TimelineServer
     potential_tweet_list = generate_potential_tweet_list(user_id,leader_id)
     $tweet_redis.del(user_id.to_s + '_timeline')
     $tweet_redis_spare.del(user_id.to_s + '_timeline')
-    assemble_timeline(potential_tweet_list)
+    assemble_timeline(potential_tweet_list,user_id)
   end
 
   def generate_potential_tweet_list(user_id,leader_id)
@@ -132,7 +132,7 @@ class TimelineServer
     new_leader_feed
   end
 
-  def assemble_timeline (leaders_tweet_list)
+  def assemble_timeline (leaders_tweet_list,user_id)
     count = 0
     empty_list_set = Set.new
 
