@@ -89,6 +89,7 @@ class TimelineServer
     leader_list
   end
 
+  # Generate unfollow list
   def generate_potential_tweet_after_unfo(leader_list)
     leaders_tweet_list = []
     if leader_list != "[]".to_json
