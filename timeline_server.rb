@@ -108,7 +108,7 @@ class TimelineServer
   def generate_potential_tweet_list(user_id,leader_id)
     potential_tweet_list = []
     current_timeline = []
-    if $tweet_redis.get(user_id + '_timeline')
+    if $tweet_redis.get(user_id.to_s + '_timeline')
       previous_timeline = []
       $tweet_redis.lrange(user_id + "_timeline", 0, -1).each do |tweet|
         previous_timeline << JSON.parse(tweet)
