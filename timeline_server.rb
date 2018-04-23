@@ -83,8 +83,8 @@ class TimelineServer
     if $follow_redis.get("#{user_id} leaders").nil?
       leader_list = JSON.parse($follow_redis.get("#{user_id} leaders")).keys
     else
-      follow_list_link = $follow_service + '/leaders/:user_id'
-      leader_list = RestClient.get(follow_list_link,{params: {user_id: user_id}})
+      follow_list_link = $follow_service + "/leaders/#{user_id}"
+      leader_list = RestClient.get(follow_list_link)
     end
     leader_list
   end
