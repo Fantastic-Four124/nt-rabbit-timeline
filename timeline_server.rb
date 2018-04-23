@@ -73,8 +73,8 @@ class TimelineServer
   def timeline_update_after_unfollow(user_id)
     leader_list = get_leader_list(user_id)
     leaders_tweet_list = generate_potential_tweet_after_unfo(leader_list)
-    $tweet_redis.del(user_id + '_timeline')
-    $tweet_redis_spare.del(user_id + '_timeline')
+    $tweet_redis.del(user_id.to_s + '_timeline')
+    $tweet_redis_spare.del(user_id.to_s + '_timeline')
     assemble_timeline(leaders_tweet_list)
   end
 
@@ -100,8 +100,8 @@ class TimelineServer
 
   def timeline_update_after_follow(user_id,leader_id)
     potential_tweet_list = generate_potential_tweet_list(user_id,leader_id)
-    $tweet_redis.del(user_id + '_timeline')
-    $tweet_redis_spare.del(user_id + '_timeline')
+    $tweet_redis.del(user_id.to_s + '_timeline')
+    $tweet_redis_spare.del(user_id.to_s + '_timeline')
     assemble_timeline(potential_tweet_list)
   end
 
@@ -110,7 +110,7 @@ class TimelineServer
     current_timeline = []
     if $tweet_redis.get(user_id.to_s + '_timeline')
       previous_timeline = []
-      $tweet_redis.lrange(user_id + "_timeline", 0, -1).each do |tweet|
+      $tweet_redis.lrange(user_id.to_s + "_timeline", 0, -1).each do |tweet|
         previous_timeline << JSON.parse(tweet)
       end
       potential_tweet_list << current_timeline
@@ -122,8 +122,8 @@ class TimelineServer
 
   def get_new_leader_feed(leader_id)
     new_leader_feed = []
-    if $tweet_redis.llen(leader_id+ "_feed") > 0
-        $tweet_redis.lrange(leader_id+ "_feed", 0, -1).each do |tweet|
+    if $tweet_redis.llen(leader_id.to_s+ "_feed") > 0
+        $tweet_redis.lrange(leader_id.to_s+ "_feed", 0, -1).each do |tweet|
           new_leader_feed << JSON.parse(tweet)
         end
     else
@@ -159,8 +159,8 @@ class TimelineServer
   end
 
   def push_tweet_to_redis(leaders_tweet_list,user_id,temp_tweet,index)
-    $tweet_redis.lpush(user_id + "_timeline",temp_tweet.to_json)
-    $tweet_redis_spare.lpush(user_id + "_timeline",temp_tweet.to_json)
+    $tweet_redis.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
+    $tweet_redis_spare.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
     leaders_tweet_list[index].shift if index >= 0
   end
 
