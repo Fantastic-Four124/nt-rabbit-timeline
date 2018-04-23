@@ -139,7 +139,7 @@ class TimelineServer
     while (count < 50 && empty_list_set.size < leaders_tweet_list.size)
       temp_tweet = nil
       index = -1
-      for i in 0..leaders_list.size - 1 do
+      for i in 0..leaders_tweet_list.size - 1 do
         next if check_empty_list(leaders_tweet_list,i,empty_list_set)
         if (temp_tweet.nil? || leaders_tweet_list[i][0][:date_posted] > temp_tweet[:date_posted])
           temp_tweet = leaders_tweet_list[i][0]
