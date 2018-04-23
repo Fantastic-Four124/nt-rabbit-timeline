@@ -91,9 +91,11 @@ class TimelineServer
 
   def generate_potential_tweet_after_unfo(leader_list)
     leaders_tweet_list = []
-    leader_list.each do |leader_id|
-      sub_list = get_new_leader_feed(leader_id)
-      leaders_tweet_list << sub_list
+    if leader_list != "[]".to_json
+      leader_list.each do |leader_id|
+        sub_list = get_new_leader_feed(leader_id)
+        leaders_tweet_list << sub_list
+      end
     end
     leaders_tweet_list
   end
