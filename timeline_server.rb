@@ -14,7 +14,7 @@ require 'set'
 require_relative 'models/tweet'
 
 Mongoid.load! "config/mongoid.yml"
-follow_service = "https://fierce-garden-41263.herokuapp.com/"
+$follow_service = "https://fierce-garden-41263.herokuapp.com/"
 
 configure do
   tweet_uri = URI.parse(ENV["TWEET_REDIS_URL"])
@@ -83,7 +83,7 @@ class TimelineServer
     if $follow_redis.get("#{user_id} leaders").nil?
       leader_list = JSON.parse($follow_redis.get("#{user_id} leaders")).keys
     else
-      follow_list_link = follow_service + '/leaders/:user_id'
+      follow_list_link = $follow_service + '/leaders/:user_id'
       leader_list = RestClient.get(follow_list_link,{params: {user_id: user_id}})
     end
     leader_list
