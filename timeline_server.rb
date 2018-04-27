@@ -21,8 +21,10 @@ configure do
   user_uri = URI.parse(ENV['USER_REDIS_URL'])
   follow_uri = URI.parse(ENV['FOLLOW_REDIS_URL'])
   tweet_uri_spare = URI.parse(ENV['TWEET_REDIS_SPARE_URL'])
+  tweet_uri_3 = URI.parse(ENV['TWEET_REDIS_3'])
   $tweet_redis_spare = Redis.new(:host => tweet_uri_spare.host, :port => tweet_uri_spare.port, :password => tweet_uri_spare.password)
   $tweet_redis = Redis.new(:host => tweet_uri.host, :port => tweet_uri.port, :password => tweet_uri.password)
+  $tweet_redis_3 = Redis.new(:host => tweet_uri_3.host, :port => tweet_uri_3.port, :password => tweet_uri_3.password)
   $user_redis = Redis.new(:host => user_uri.host, :port => user_uri.port, :password => user_uri.password)
   $follow_redis = Redis.new(:host => follow_uri.host, :port => follow_uri.port, :password => follow_uri.password)
   PREFIX = '/api/v1'
@@ -75,6 +77,7 @@ class TimelineServer
     leaders_tweet_list = generate_potential_tweet_after_unfo(leader_list)
     $tweet_redis.del(user_id.to_s + '_timeline')
     $tweet_redis_spare.del(user_id.to_s + '_timeline')
+    $tweet_redis_3.del(user_id.to_s + '_timeline')
     assemble_timeline(leaders_tweet_list,user_id)
   end
 
@@ -107,6 +110,7 @@ class TimelineServer
     potential_tweet_list = generate_potential_tweet_list(user_id,leader_id)
     $tweet_redis.del(user_id.to_s + '_timeline')
     $tweet_redis_spare.del(user_id.to_s + '_timeline')
+    $tweet_redis_3.del(user_id.to_s + '_timeline')
     assemble_timeline(potential_tweet_list,user_id)
   end
 
@@ -116,7 +120,7 @@ class TimelineServer
     if $tweet_redis.llen(user_id.to_s + '_timeline') > 0
       previous_timeline = []
       $tweet_redis.lrange(user_id.to_s + "_timeline", 0, -1).each do |tweet|
-        previous_timeline << JSON.parse(tweet)
+        previous_timeline << tweet #JSON.parse(tweet)
       end
       potential_tweet_list << current_timeline
     end
@@ -129,7 +133,7 @@ class TimelineServer
     new_leader_feed = []
     if $tweet_redis.llen(leader_id.to_s+ "_feed") > 0
         $tweet_redis.lrange(leader_id.to_s+ "_feed", 0, -1).each do |tweet|
-          new_leader_feed << JSON.parse(tweet)
+          new_leader_feed << tweet #JSON.parse(tweet)
         end
     else
       new_leader_feed  = Tweet.where('user.id' => leader_id).desc(:date_posted).limit(50)
@@ -164,8 +168,9 @@ class TimelineServer
   end
 
   def push_tweet_to_redis(leaders_tweet_list,user_id,temp_tweet,index)
-    $tweet_redis.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
-    $tweet_redis_spare.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
+    $tweet_redis.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
+    $tweet_redis_spare.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
+    $tweet_redis_3.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
     leaders_tweet_list[index].shift if index >= 0
   end
 
