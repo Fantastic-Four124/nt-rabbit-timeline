@@ -168,9 +168,9 @@ class TimelineServer
   end
 
   def push_tweet_to_redis(leaders_tweet_list,user_id,temp_tweet,index)
-    $tweet_redis.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
-    $tweet_redis_spare.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
-    $tweet_redis_3.lpush(user_id.to_s + "_timeline",temp_tweet.as_json)
+    $tweet_redis.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
+    $tweet_redis_spare.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
+    $tweet_redis_3.lpush(user_id.to_s + "_timeline",temp_tweet.to_json)
     leaders_tweet_list[index].shift if index >= 0
   end
 
